@@ -1,5 +1,13 @@
 # Discretionary
 
+[![status]][actions]
+[![version]][crates]
+
+[status]: https://img.shields.io/github/workflow/status/dfm/discretionary/Tests/main
+[actions]: https://github.com/dfm/discretionary/actions?query=branch%3Amain
+[version]: https://img.shields.io/crates/v/discretionary.svg
+[crates]: https://crates.io/crates/discretionary
+
 A tiny procedural macro to make all your struct fields optional. For now, this
 package is essentially trivial, although it might be useful if you have some
 huge `struct` that needs to have all its field types converted from `T` to
