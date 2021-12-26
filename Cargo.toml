@@ -1,0 +1,20 @@
+[package]
+name = "discretionary"
+version = "0.1.0"
+edition = "2018"
+authors = ["Dan Foreman-Mackey <foreman.mackey@gmail.com>"]
+readme = "README.md"
+homepage = "https://github.com/dfm/discretionary"
+repository = "https://github.com/dfm/discretionary.git"
+description = "A tiny proc macro to make all your struct fields optional"
+license = "Apache-2.0"
+documentation = "https://docs.rs/discretionary"
+categories = ["development-tools", "rust-patterns"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "1.0", features = ["full"] }
+quote = "1.0"
+proc-macro2 = "1.0"
