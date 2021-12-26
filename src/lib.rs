@@ -1,17 +1,49 @@
-use quote::quote;
-use syn::{parse_macro_input, ItemStruct};
+#![doc = include_str!("../README.md")]
 
+use quote::quote;
+use syn::{AttributeArgs, ItemStruct, NestedMeta};
+
+/// Processes a struct to convert the fields to `Option`s
+///
+/// For now, this will always convert _all_ field types to `Option`, but the
+/// goal is to someday add filtering for skipping some fields. The usage is
+/// straightforward: just decorate your `struct` with `#[make_optional]`. For
+/// example, the following
+///
+/// ```
+/// use discretionary::make_optional;
+///
+/// #[make_optional]
+/// struct ExampleStruct {
+///     id: usize,
+///     name: String,
+/// }
+/// ```
+///
+/// will be re-written to something like
+///
+/// ```
+/// struct ExampleStruct {
+///     id: Option<usize>,
+///     name: Option<String>,
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn make_optional(
     args: proc_macro::TokenStream,
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let mut input = parse_macro_input!(input as ItemStruct);
-    let _ = parse_macro_input!(args as syn::parse::Nothing);
-    impl_make_optional(&mut input).into()
+    let args = syn::parse_macro_input!(args as AttributeArgs);
+    let mut input = syn::parse_macro_input!(input as ItemStruct);
+    impl_make_optional(&args, &mut input)
+        .unwrap_or_else(|err| err.to_compile_error())
+        .into()
 }
 
-fn impl_make_optional(obj: &mut ItemStruct) -> proc_macro2::TokenStream {
+fn impl_make_optional(
+    _args: &[NestedMeta],
+    obj: &mut ItemStruct,
+) -> syn::Result<proc_macro2::TokenStream> {
     match obj.fields {
         syn::Fields::Named(ref mut fields) => fields.named.iter_mut().for_each(|field| {
             let orig_ty = &field.ty;
@@ -23,7 +55,7 @@ fn impl_make_optional(obj: &mut ItemStruct) -> proc_macro2::TokenStream {
         }),
         _ => {}
     }
-    quote! {
+    Ok(quote! {
         #obj
-    }
+    })
 }
