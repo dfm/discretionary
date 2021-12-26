@@ -35,27 +35,22 @@ pub fn make_optional(
 ) -> proc_macro::TokenStream {
     let args = syn::parse_macro_input!(args as AttributeArgs);
     let mut input = syn::parse_macro_input!(input as ItemStruct);
-    impl_make_optional(&args, &mut input)
-        .unwrap_or_else(|err| err.to_compile_error())
-        .into()
+    impl_make_optional(&args, &mut input).into()
 }
 
-fn impl_make_optional(
-    _args: &[NestedMeta],
-    obj: &mut ItemStruct,
-) -> syn::Result<proc_macro2::TokenStream> {
+fn impl_make_optional(_args: &[NestedMeta], obj: &mut ItemStruct) -> proc_macro2::TokenStream {
     match obj.fields {
         syn::Fields::Named(ref mut fields) => fields.named.iter_mut().for_each(|field| {
             let orig_ty = &field.ty;
-            field.ty = syn::Type::Verbatim(quote!(Option<#orig_ty>))
+            field.ty = syn::Type::Verbatim(quote!(Option<#orig_ty>));
         }),
         syn::Fields::Unnamed(ref mut fields) => fields.unnamed.iter_mut().for_each(|field| {
             let orig_ty = &field.ty;
-            field.ty = syn::Type::Verbatim(quote!(Option<#orig_ty>))
+            field.ty = syn::Type::Verbatim(quote!(Option<#orig_ty>));
         }),
-        _ => {}
+        syn::Fields::Unit => {}
     }
-    Ok(quote! {
+    quote! {
         #obj
-    })
+    }
 }
