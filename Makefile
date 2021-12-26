@@ -22,4 +22,4 @@ check:
 	@cargo clippy -- -Dclippy::all -Dclippy::pedantic
 	@cargo check 
 
-.PHONY: all clean build test format check bench run new
+.PHONY: all clean build test format check
