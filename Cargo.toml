@@ -10,6 +10,7 @@ description = "A tiny procedural macro to make all your struct fields optional"
 license = "Apache-2.0"
 documentation = "https://docs.rs/discretionary"
 categories = ["development-tools", "rust-patterns"]
+exclude = [".github/*"]
 
 [lib]
 proc-macro = true
